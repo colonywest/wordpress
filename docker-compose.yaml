@@ -34,12 +34,12 @@ services:
         target: /etc/mysql/conf.d
 
   php:
+    image: wordpress-php:8.3-fpm-alpine
     container_name: wordpress-php
+    pull_policy: build
     build:
       context: ./php
       pull: true
-      tags:
-        - "wordpress-php:8.3-fpm-alpine"
 
     restart: unless-stopped
     depends_on:

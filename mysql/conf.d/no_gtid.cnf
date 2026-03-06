@@ -1,0 +1,5 @@
+[mysqld]
+
+gtid_mode=OFF
+enforce_gtid_consistency=OFF
+

@@ -1,0 +1,72 @@
+networks:
+  default:
+    name: wordpress
+
+secrets:
+   wordpress_password:
+     file: ./mysql/secrets/wordpress_password.txt
+   root_password:
+     file: ./mysql/secrets/root_password.txt
+
+services:
+  mysql:
+    image: mysql
+    container_name: wordpress-mysql
+    restart: unless-stopped
+
+    environment:
+       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD_FILE: /run/secrets/wordpress_password
+
+    secrets:
+      - root_password
+      - wordpress_password
+
+    volumes:
+      - type: bind
+        source: ./mysql/data
+        target: /var/lib/mysql
+
+      - type: bind
+        source: ./mysql/conf.d
+        target: /etc/mysql/conf.d
+
+  php:
+    container_name: wordpress-php
+    build:
+      context: ./wordpress-php
+      pull: true
+      tags:
+        - "wordpress-php:8.3-fpm-alpine"
+
+    restart: unless-stopped
+    depends_on:
+      - mysql
+
+    volumes:
+      - type: bind
+        source: ./wordpress
+        target: /usr/share/nginx/wordpress
+
+  nginx:
+    image: nginx:latest
+    container_name: wordpress-nginx
+    restart: unless-stopped
+    depends_on:
+      - php
+
+    volumes:
+      - type: bind
+        source: ./wordpress
+        target: /usr/share/nginx/wordpress
+
+      - type: bind
+        source: ./nginx
+        target: /etc/nginx/conf.d
+
+    ports:
+      - "80:80"
+      - "443:443"
+

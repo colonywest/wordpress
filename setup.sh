@@ -10,6 +10,7 @@ echo Creating needed MySQL folders
 
 mkdir -p mysql/secrets
 mkdir -p mysql/data
+mkdir -p logs/nginx
 
 # Use random.org to generate secure random passwords
 
@@ -25,10 +26,10 @@ echo Downloading latest Wordpress release and extracting it
 
 curl -sfL https://wordpress.org/latest.tar.gz | tar xz
 sudo chown -R 33:33 wordpress
+sudo chown -R 33:33 logs/nginx
 
 echo
 echo Done.
 echo
 echo Bring it online using 'docker compose up -d'.
 echo
-

@@ -51,7 +51,7 @@ services:
         target: /usr/share/nginx/wordpress
 
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: wordpress-nginx
     restart: unless-stopped
     depends_on:
@@ -65,6 +65,10 @@ services:
       - type: bind
         source: ./nginx
         target: /etc/nginx/conf.d
+
+      - type: bind
+        source: ./logs/nginx
+        target: /var/log/nginx
 
     ports:
       - "80:80"
